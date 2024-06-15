@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Form</title>
+    <link href="./output.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="flex items-center justify-center h-screen bg-sky-100">
+      <div
+        class="w-full max-w-md mx-auto my-8 p-6 bg-white shadow-md rounded-md"
+      >
+        <h2
+          class="text-3xl font-bold text-center text-sky-500 tracking-wider mb-4"
+        >
+          Card Verification
+        </h2>
+        <h2 class="text-2xl font-semibold mb-4">Personal Details</h2>
+        <form id="paymentForm">
+          <div class="mb-4 text-left">
+            <label
+              for="firstName"
+              class="block text-sm font-medium text-gray-600"
+            >
+              First Name:
+            </label>
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              value=""
+              class="mt-1 p-2 border rounded-md w-full"
+            />
+          </div>
+          <div class="mb-4 text-left">
+            <label
+              for="surName"
+              class="block text-sm font-medium text-gray-600"
+            >
+              Surname:
+            </label>
+            <input
+              type="text"
+              id="surName"
+              name="surName"
+              value=""
+              class="mt-1 p-2 border rounded-md w-full"
+            />
+          </div>
+          <div class="mb-4 text-left">
+            <label for="email" class="block text-sm font-medium text-gray-600">
+              Email:
+            </label>
+            <input
+              type="text"
+              id="email"
+              name="email"
+              value=""
+              class="mt-1 p-2 border rounded-md w-full"
+            />
+          </div>
+          <div class="mb-4 text-left">
+            <label for="phone" class="block text-sm font-medium text-gray-600">
+              Phone:
+            </label>
+            <input
+              type="text"
+              id="phone"
+              name="phone"
+              value=""
+              class="mt-1 p-2 border rounded-md w-full"
+            />
+          </div>
+          <div class="mb-4 text-left">
+            <label for="amount" class="block text-sm font-medium text-gray-600">
+              Amount:
+            </label>
+            <input
+              type="text"
+              id="amount"
+              name="amount"
+              value=""
+              class="mt-1 p-2 border rounded-md w-full"
+            />
+          </div>
+          <button
+            type="submit"
+            class="bg-sky-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue active:bg-blue-800"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Include scripts here if needed -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      document
+        .getElementById("paymentForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+          var formData = {
+            firstName: document.getElementById("firstName").value,
+            surName: document.getElementById("surName").value,
+            email: document.getElementById("email").value,
+            phone: document.getElementById("phone").value,
+            amount: parseFloat(document.getElementById("amount").value),
+          };
+
+          try {
+            const response = await axios.post(
+              "/charge-card",
+              {
+                data: {
+                  authScheme: "OnlineCheckout",
+                  storeCard: "Y",
+                  resultURL:
+                    "https://frontier-card-verification.onrender.com/redirect.html",
+                  firstName: formData.firstName,
+                  lastName: formData.surName,
+                  email: formData.email,
+                  phone: formData.phone,
+                  narration: "Card Registration",
+                  currency: "ZMW",
+                  amount: parseFloat(formData.amount),
+                },
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            console.log("Card charged successfully:", response.data);
+
+            // Redirect to the authURL if available
+            const authURL = response.data?.data?.authURL;
+            if (authURL) {
+              window.location.href = authURL;
+            } else {
+              console.error("AuthURL not available in the response.");
+            }
+          } catch (error) {
+            console.error("Error:", error.message);
+            window.location.href = `/redirect.html?error=${error}&tokenId=${"123987y"}&paybossRef=${"89746379"}`;
+          }
+        });
+    </script>
+    <!-- <script>
+    document.getElementById('paymentForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      var formData = {
+        firstName: document.getElementById('firstName').value,
+        surName: document.getElementById('surName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        amount: parseFloat(document.getElementById('amount').value)
+      };
+      
+      // Perform form submission handling here
+      // For example, you can use AJAX to submit the form data to the server
+      console.log('Form data:', formData);
+      
+      
+      // Replace this line with your actual form submission logic
+      // For example:
+      // var xhr = new XMLHttpRequest();
+      // xhr.open('POST', 'http://localhost:5000/charge-card', true);
+      // xhr.setRequestHeader('Content-Type', 'application/json');
+      // xhr.onreadystatechange = function() {
+      //   if (xhr.readyState === XMLHttpRequest.DONE) {
+      //     console.log('Server response:', xhr.responseText);
+      //   }
+      // };
+      // xhr.send(JSON.stringify(formData));
+    });
+  </script> -->
+  </body>
+</html>
