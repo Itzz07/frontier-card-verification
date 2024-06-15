@@ -5,18 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Payment Form</title>
     <link href="./output.css" rel="stylesheet" />
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.jpg" />
   </head>
   <body>
-    <div class="flex items-center justify-center h-screen bg-sky-100">
+    <div class="flex items-center justify-center bg-sky-900">
       <div
         class="w-full max-w-md mx-auto my-8 p-6 bg-white shadow-md rounded-md"
       >
+        <img
+          src="images/FrontierFinanceLimitedLogo.png"
+          alt="Card Verification"
+          class="w-full h-auto mb-4"
+        />
         <h2
           class="text-3xl font-bold text-center text-sky-500 tracking-wider mb-4"
         >
           Card Verification
         </h2>
-        <h2 class="text-2xl font-semibold mb-4">Personal Details</h2>
+        <h2 class="text-2xl font-semibold mb-4">Client's Details</h2>
         <form id="paymentForm">
           <div class="mb-4 text-left">
             <label
@@ -31,6 +37,7 @@
               name="firstName"
               value=""
               class="mt-1 p-2 border rounded-md w-full"
+              required
             />
           </div>
           <div class="mb-4 text-left">
@@ -46,6 +53,7 @@
               name="surName"
               value=""
               class="mt-1 p-2 border rounded-md w-full"
+              required
             />
           </div>
           <div class="mb-4 text-left">
@@ -58,6 +66,7 @@
               name="email"
               value=""
               class="mt-1 p-2 border rounded-md w-full"
+              required
             />
           </div>
           <div class="mb-4 text-left">
@@ -70,6 +79,7 @@
               name="phone"
               value=""
               class="mt-1 p-2 border rounded-md w-full"
+              required
             />
           </div>
           <div class="mb-4 text-left">
@@ -82,10 +92,12 @@
               name="amount"
               value=""
               class="mt-1 p-2 border rounded-md w-full"
+              required
             />
           </div>
           <button
             type="submit"
+            id="submitButton"
             class="bg-sky-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue active:bg-blue-800"
           >
             Submit
@@ -108,7 +120,10 @@
             phone: document.getElementById("phone").value,
             amount: parseFloat(document.getElementById("amount").value),
           };
-
+          if (Object.keys(formData).length > 0) {
+            // Change the text of the button to "Loading..."
+            document.getElementById("submitButton").innerText = "Loading...";
+          }
           try {
             const response = await axios.post(
               "/charge-card",
